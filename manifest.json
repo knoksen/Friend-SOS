@@ -1,20 +1,88 @@
 {
   "short_name": "Friend SOS",
   "name": "Friend SOS: Personal Emergency Alert",
+  "description": "Quick emergency alerts with AI assistance",
   "icons": [
     {
-      "src": "/icon-192.png",
-      "type": "image/png",
-      "sizes": "192x192"
+      "src": "/icons/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/icons/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/maskable-192.png",
+      "sizes": "192x192",
       "type": "image/png",
-      "sizes": "512x512"
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "any",
   "theme_color": "#DC2626",
-  "background_color": "#111827"
+  "background_color": "#111827",
+  "categories": ["emergency", "safety", "utilities"],
+  "screenshots": [
+    {
+      "src": "/screenshots/home-light.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "platform": "narrow",
+      "label": "Home Screen - Light Mode"
+    },
+    {
+      "src": "/screenshots/home-dark.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "platform": "narrow",
+      "label": "Home Screen - Dark Mode"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Send SOS",
+      "short_name": "SOS",
+      "description": "Send an emergency alert",
+      "url": "/sos",
+      "icons": [{ "src": "/icons/sos-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Start Check-in",
+      "short_name": "Check-in",
+      "description": "Start a check-in sequence",
+      "url": "/check-in",
+      "icons": [{ "src": "/icons/checkin-96.png", "sizes": "96x96" }]
+    }
+  ]
 }
