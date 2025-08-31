@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { generateAlert } from './services/geminiService';
+import { generateAlert } from './services/alertGenerationService';
 import { playSound } from './services/soundService';
 import type { AlertContent, MessageTemplate } from './types';
 import InputField from './components/InputField';

@@ -44,6 +44,10 @@ export class AnthropicProvider implements AIProvider {
         this.model = config.model || this.model;
     }
 
+    getRequiredConfigFields(): string[] {
+        return ['apiKey'];
+    }
+
     async generateAlert(
         name: string,
         message: string,

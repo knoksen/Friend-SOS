@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { MessageTemplate } from '../types';
+import { AIProviderSelector } from './AIProviderSelector';
 
 interface SettingsPageProps {
   onClose: () => void;
@@ -181,6 +182,15 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                 >
                     Clear All App Data
                 </button>
+            </div>
+        </div>
+
+        {/* AI Provider Settings */}
+        <div className="space-y-6">
+            <h2 className="text-lg font-semibold text-red-300 border-b border-red-500/20 pb-2">AI Provider</h2>
+            <div className="bg-gray-900/50 p-4 rounded-lg space-y-4">
+              <p className="text-sm text-gray-400">Choose and configure your preferred AI provider for generating alerts.</p>
+              <AIProviderSelector />
             </div>
         </div>
 
