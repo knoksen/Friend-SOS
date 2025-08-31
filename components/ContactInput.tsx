@@ -1,5 +1,7 @@
-import React, { useState, KeyboardEvent } from 'react';
+import React, { useState, KeyboardEvent, useEffect } from 'react';
 import { isValidContact } from '../utils/validation';
+import { ContactManagementService } from '../services/contactManagementService';
+import type { EmergencyContact, EmergencyList } from '../types';
 
 interface ContactInputProps {
   value: string[];
@@ -8,6 +10,15 @@ interface ContactInputProps {
 
 const ContactInput: React.FC<ContactInputProps> = ({ value, onChange }) => {
   const [inputValue, setInputValue] = useState('');
+  const [savedContacts, setSavedContacts] = useState<EmergencyContact[]>([]);
+  const [savedLists, setSavedLists] = useState<EmergencyList[]>([]);
+  const [showSavedContacts, setShowSavedContacts] = useState(false);
+  
+  useEffect(() => {
+    const contactService = ContactManagementService.getInstance();
+    setSavedContacts(contactService.getAllContacts());
+    setSavedLists(contactService.getAllLists());
+  }, []);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (['Enter', ','].includes(e.key) && inputValue.trim()) {
@@ -44,9 +55,81 @@ const ContactInput: React.FC<ContactInputProps> = ({ value, onChange }) => {
 
   return (
     <div>
-      <label htmlFor="contacts" className="block mb-2 text-sm font-medium text-gray-300">
-        Contacts to Alert <span className="text-red-400">*</span>
-      </label>
+      <div className="flex justify-between items-center mb-2">
+        <label htmlFor="contacts" className="text-sm font-medium text-gray-300">
+          Contacts to Alert <span className="text-red-400">*</span>
+        </label>
+        {(savedContacts.length > 0 || savedLists.length > 0) && (
+          <button
+            onClick={() => setShowSavedContacts(!showSavedContacts)}
+            className="text-sm text-red-400 hover:text-red-300"
+            aria-label={showSavedContacts ? 'Hide saved contacts' : 'Show saved contacts'}
+          >
+            {showSavedContacts ? 'Hide Saved' : 'Show Saved'}
+          </button>
+        )}
+      </div>
+
+      {showSavedContacts && (savedContacts.length > 0 || savedLists.length > 0) && (
+        <div className="mb-3 space-y-3">
+          {savedLists.length > 0 && (
+            <div>
+              <h4 className="text-sm font-medium text-gray-400 mb-2">Emergency Lists</h4>
+              <div className="flex flex-wrap gap-2">
+                {savedLists.map(list => {
+                  const contactService = ContactManagementService.getInstance();
+                  const listContacts = contactService.getContactsFromList(list.id);
+                  return (
+                    <button
+                      key={list.id}
+                      onClick={() => {
+                        const newContacts = [...value];
+                        listContacts.forEach(contact => {
+                          if (!newContacts.includes(contact.contact)) {
+                            newContacts.push(contact.contact);
+                          }
+                        });
+                        onChange(newContacts);
+                      }}
+                      className="px-3 py-1 bg-red-900/30 text-red-300 rounded-full text-sm hover:bg-red-900/50 transition-colors"
+                      title={`Add all contacts from ${list.name}`}
+                    >
+                      {list.name} ({listContacts.length})
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {savedContacts.length > 0 && (
+            <div>
+              <h4 className="text-sm font-medium text-gray-400 mb-2">Saved Contacts</h4>
+              <div className="flex flex-wrap gap-2">
+                {savedContacts.map(contact => (
+                  <button
+                    key={contact.id}
+                    onClick={() => {
+                      if (!value.includes(contact.contact)) {
+                        onChange([...value, contact.contact]);
+                      }
+                    }}
+                    disabled={value.includes(contact.contact)}
+                    className={`px-3 py-1 rounded-full text-sm transition-colors ${
+                      value.includes(contact.contact)
+                        ? 'bg-gray-700/30 text-gray-500 cursor-not-allowed'
+                        : 'bg-gray-700/50 text-gray-300 hover:bg-gray-700'
+                    }`}
+                    title={value.includes(contact.contact) ? 'Already added' : `Add ${contact.name}`}
+                  >
+                    {contact.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
       <div className="w-full bg-gray-900/70 border border-gray-700 rounded-lg px-3 py-2 text-gray-200 focus-within:ring-2 focus-within:ring-red-500 focus-within:border-red-500 transition-all duration-300 flex flex-wrap items-center gap-2">
         {value.map((contact, index) => {
           const valid = isValidContact(contact);
