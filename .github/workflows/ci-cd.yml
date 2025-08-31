@@ -1,0 +1,142 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [created]
+
+jobs:
+  test-client:
+    runs-on: ubuntu-latest
+    name: Test Client Application
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install Dependencies
+        run: npm ci
+      
+      - name: Run Tests
+        run: npm test
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      
+      - name: Upload Test Coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: client-coverage
+          path: coverage/
+
+  test-server:
+    runs-on: ubuntu-latest
+    name: Test Push Notification Server
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: server/package-lock.json
+      
+      - name: Install Server Dependencies
+        working-directory: server
+        run: npm ci
+      
+      - name: Generate VAPID Keys
+        working-directory: server
+        run: npm run generate-vapid
+      
+      - name: Run Server Tests
+        working-directory: server
+        run: npm run test:coverage
+      
+      - name: Upload Server Test Coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: server-coverage
+          path: server/coverage/
+
+  build:
+    needs: [test-client, test-server]
+    runs-on: ubuntu-latest
+    name: Build Application
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install Dependencies
+        run: |
+          npm ci
+          cd server && npm ci
+      
+      - name: Build Client
+        run: npm run build
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          VITE_VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
+      
+      - name: Build Server
+        working-directory: server
+        run: npm run build
+      
+      - name: Upload Client Build
+        uses: actions/upload-artifact@v3
+        with:
+          name: client-build
+          path: dist/
+      
+      - name: Upload Server Build
+        uses: actions/upload-artifact@v3
+        with:
+          name: server-build
+          path: server/dist/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    name: Deploy to Production
+    
+    steps:
+      - name: Download Client Build
+        uses: actions/download-artifact@v3
+        with:
+          name: client-build
+          path: dist
+      
+      - name: Download Server Build
+        uses: actions/download-artifact@v3
+        with:
+          name: server-build
+          path: server/dist
+      
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+      
+      - name: Deploy Server to Azure
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'friend-sos-server'
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: server/dist
