@@ -11,7 +11,7 @@ interface ProgressBarProps {
 
 const ProgressBar: React.FC<ProgressBarProps> = ({ steps, className = '' }) => {
   const completedSteps = steps.filter(step => step.completed).length;
-  const progress = (completedSteps / steps.length) * 100;
+  const progress = Math.round((completedSteps / steps.length) * 100);
 
   return (
     <div 
@@ -19,8 +19,10 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ steps, className = '' }) => {
       role="progressbar" 
       aria-label="Alert generation progress"
       aria-valuenow={progress}
-      aria-valuemin="0"
-      aria-valuemax="100"
+      aria-valuemin={0}
+      aria-valuemax={100}
+      data-progress={progress}
+    >
       <div className="flex items-center justify-between">
         {steps.map((step, index) => (
           <React.Fragment key={step.label}>

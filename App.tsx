@@ -17,6 +17,8 @@ import MessageTemplateSelector from './components/MessageTemplateSelector';
 import Toast from './components/Toast';
 import Skeleton from './components/Skeleton';
 import TutorialManager from './components/TutorialManager';
+import HelpButton from './components/HelpButton';
+import KeyboardShortcutsModal from './components/KeyboardShortcutsModal';
 
 
 // Fix for SpeechRecognition API types which are not in default TS lib.
@@ -112,8 +114,7 @@ const App: React.FC = () => {
   const [templates, setTemplates] = useState<MessageTemplate[]>([]);
   const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false);
   const [showHelpMenu, setShowHelpMenu] = useState(false);
-
-  useEffect(() => {
+  const [isTutorialOpen, setIsTutorialOpen] = useState(false);
 
   const showToast = useCallback((message: string, type: 'success' | 'error' | 'info' = 'info') => {
     const id = Date.now();
@@ -125,35 +126,7 @@ const App: React.FC = () => {
     setToasts(prev => prev.filter(toast => toast.id !== id));
   }, []);
 
-  // Keyboard shortcuts
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      // Ctrl/Cmd + Enter to send alert
-      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !isLoading && name.trim() && allContactsValid) {
-        e.preventDefault();
-        handleSendAlert();
-      }
-      // Ctrl/Cmd + M to toggle microphone
-      if ((e.ctrlKey || e.metaKey) && e.key === 'm' && speechRecognitionSupported) {
-        e.preventDefault();
-        handleToggleListening();
-      }
-      // Esc to reset form when alert is shown
-      if (e.key === 'Escape' && generatedAlert) {
-        e.preventDefault();
-        resetForm();
-      }
-      // Ctrl/Cmd + , to toggle settings
-      if ((e.ctrlKey || e.metaKey) && e.key === ',') {
-        e.preventDefault();
-        setShowSettings(prev => !prev);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [handleSendAlert, handleToggleListening, generatedAlert, isLoading, name, allContactsValid]);
-
+  // Initialize app state
   useEffect(() => {
     // PWA Service Worker Registration
     if ('serviceWorker' in navigator) {
@@ -206,6 +179,12 @@ const App: React.FC = () => {
     
     const savedSystemInstruction = localStorage.getItem('sosSystemInstruction');
     if (savedSystemInstruction) setCustomSystemInstruction(savedSystemInstruction);
+
+    // Show keyboard shortcuts on first visit unless disabled
+    const hideShortcutsOnStartup = localStorage.getItem('hideShortcutsOnStartup');
+    if (hideShortcutsOnStartup !== 'true') {
+      setShowKeyboardShortcuts(true);
+    }
 
     const savedTemplates = localStorage.getItem('sosTemplates');
     if (savedTemplates) {
@@ -375,34 +354,91 @@ const App: React.FC = () => {
 
   const allContactsValid = contacts.length > 0 && contacts.every(isValidContact);
 
+  // Double Escape handling
+  const lastEscPress = useRef<number>(0);
+  const escDelay = 300; // ms between presses to count as double-tap
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      // Ctrl/Cmd + Enter to send alert
+      // Prevent shortcuts when typing in inputs
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      // Essential Actions
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !isLoading && name.trim() && allContactsValid) {
         e.preventDefault();
         handleSendAlert();
       }
-      // Ctrl/Cmd + M to toggle microphone
       if ((e.ctrlKey || e.metaKey) && e.key === 'm' && speechRecognitionSupported) {
         e.preventDefault();
         handleToggleListening();
       }
-      // Esc to reset form when alert is shown
-      if (e.key === 'Escape' && generatedAlert) {
-        e.preventDefault();
-        resetForm();
+      if (e.key === 'Escape') {
+        const now = Date.now();
+        if (now - lastEscPress.current < escDelay) {
+          // Double Escape press - Reset form
+          e.preventDefault();
+          resetForm();
+          lastEscPress.current = 0; // Reset timer
+        } else {
+          // Single Escape press - Close modals
+          e.preventDefault();
+          if (generatedAlert) resetForm();
+          if (showSettings) setShowSettings(false);
+          if (showKeyboardShortcuts) setShowKeyboardShortcuts(false);
+          if (showHelpMenu) setShowHelpMenu(false);
+          lastEscPress.current = now;
+        }
       }
-      // Ctrl/Cmd + , to toggle settings
+
+      // Navigation & Settings
       if ((e.ctrlKey || e.metaKey) && e.key === ',') {
         e.preventDefault();
         setShowSettings(prev => !prev);
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setShowKeyboardShortcuts(prev => !prev);
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'h') {
+        e.preventDefault();
+        setShowHelpMenu(prev => !prev);
+      }
+
+      // Quick Controls
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        handlePreviewSound();
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
+        e.preventDefault();
+        setIncludeLocation(prev => !prev);
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+        e.preventDefault();
+        resetForm();
+      }
+
+      // Help & Learning
+      if ((e.ctrlKey || e.metaKey) && e.key === 't') {
+        e.preventDefault();
+        setIsTutorialOpen(true);
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === '?') {
+        e.preventDefault();
+        window.open('https://github.com/yourusername/friend-sos#documentation', '_blank');
       }
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [handleSendAlert, handleToggleListening, generatedAlert, isLoading, name, allContactsValid]);
+  }, [
+    handleSendAlert, handleToggleListening, handlePreviewSound, generatedAlert,
+    isLoading, name, allContactsValid, showSettings, showKeyboardShortcuts,
+    showHelpMenu, resetForm
+  ]);
 
   if (isInitializing) {
     return (
@@ -538,7 +574,10 @@ const App: React.FC = () => {
       </TutorialManager>
       
       {/* Help Button and Keyboard Shortcuts */}
-      <HelpButton onStartTutorial={() => setTutorialOpen(true)} />
+      <HelpButton 
+        onStartTutorial={() => setIsTutorialOpen(true)} 
+        onShowShortcuts={() => setShowKeyboardShortcuts(true)}
+      />
       <KeyboardShortcutsModal
         isOpen={showKeyboardShortcuts}
         onClose={() => setShowKeyboardShortcuts(false)}
