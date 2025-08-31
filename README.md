@@ -92,6 +92,7 @@ You have two options for deployment:
 4. **Deploy:**
    - The app will automatically deploy when you push to main
    - You can also manually deploy from the Actions tab
+   - Visit the "Environment" section to find your deployment URL
 
 #### Option 2: Vercel Deployment
 
