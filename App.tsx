@@ -110,6 +110,10 @@ const App: React.FC = () => {
   const [temperature, setTemperature] = useState<number>(0.2);
   const [customSystemInstruction, setCustomSystemInstruction] = useState<string>('');
   const [templates, setTemplates] = useState<MessageTemplate[]>([]);
+  const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false);
+  const [showHelpMenu, setShowHelpMenu] = useState(false);
+
+  useEffect(() => {
 
   const showToast = useCallback((message: string, type: 'success' | 'error' | 'info' = 'info') => {
     const id = Date.now();
@@ -532,6 +536,13 @@ const App: React.FC = () => {
         <p>Friend SOS &copy; {new Date().getFullYear()}. For demonstration purposes only.</p>
       </footer>
       </TutorialManager>
+      
+      {/* Help Button and Keyboard Shortcuts */}
+      <HelpButton onStartTutorial={() => setTutorialOpen(true)} />
+      <KeyboardShortcutsModal
+        isOpen={showKeyboardShortcuts}
+        onClose={() => setShowKeyboardShortcuts(false)}
+      />
     </div>
   );
 };
