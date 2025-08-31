@@ -53,9 +53,10 @@ const ActionButton: React.FC<{href: string; label: string; children: React.React
 const GeneratedAlert: React.FC<GeneratedAlertProps> = ({ alert, onReset, contacts }) => {
   const encodedTitle = encodeURIComponent(alert.title);
   const encodedBody = encodeURIComponent(alert.body);
-  const { sending, error, sendSMS, isConfigured } = useSMS();
+  const { sending, error, sendSMS, sendBulkSMS, isConfigured } = useSMS();
   const [sendingTo, setSendingTo] = useState<string | null>(null);
   const [showError, setShowError] = useState<string | null>(null);
+  const [bulkSendResults, setBulkSendResults] = useState<Array<{ to: string; success: boolean; error?: string }>>([]);
 
   const handleSendSMS = async (phoneNumber: string) => {
     setSendingTo(phoneNumber);
@@ -157,6 +158,49 @@ const GeneratedAlert: React.FC<GeneratedAlertProps> = ({ alert, onReset, contact
       </div>
 
       <div className="mt-6 border-t border-gray-700/50 pt-4 flex flex-col items-center gap-3">
+        {isConfigured && contacts.filter(c => getContactType(c) === 'phone').length > 1 && (
+          <button
+            onClick={async () => {
+              const phoneNumbers = contacts
+                .filter(c => getContactType(c) === 'phone')
+                .map(c => formatPhoneNumberForURL(c));
+              
+              try {
+                const results = await sendBulkSMS(phoneNumbers, alert.body);
+                setBulkSendResults(
+                  results.map(r => ({
+                    to: r.to,
+                    success: !r.error,
+                    error: r.error
+                  }))
+                );
+              } catch (err) {
+                setShowError(err instanceof Error ? err.message : 'Failed to send bulk SMS');
+              }
+            }}
+            disabled={sending}
+            className={`inline-flex items-center gap-2 text-sm ${
+              sending 
+                ? 'bg-yellow-600/80 cursor-wait' 
+                : 'bg-green-600/80 hover:bg-green-700'
+            } text-white font-semibold py-2 px-4 rounded-lg transition-colors`}
+          >
+            {sending ? (
+              <>
+                <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Sending to all contacts...
+              </>
+            ) : (
+              <>
+                <SmsIcon /> Send SMS to All Contacts
+              </>
+            )}
+          </button>
+        )}
+
         <a 
           href={`https://t.me/share/url?url=&text=${encodedBody}`} 
           target="_blank"
@@ -165,6 +209,24 @@ const GeneratedAlert: React.FC<GeneratedAlertProps> = ({ alert, onReset, contact
         >
           <TelegramIcon /> Share on Telegram
         </a>
+
+        {bulkSendResults.length > 0 && (
+          <div className="w-full mt-4 space-y-2">
+            <h3 className="text-sm font-semibold text-gray-300">Bulk Send Results:</h3>
+            {bulkSendResults.map((result, index) => (
+              <div 
+                key={index}
+                className={`text-sm p-2 rounded ${
+                  result.success 
+                    ? 'bg-green-900/20 text-green-300' 
+                    : 'bg-red-900/20 text-red-300'
+                }`}
+              >
+                <span className="font-mono">{result.to}</span>: {result.success ? 'Sent' : result.error}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <button

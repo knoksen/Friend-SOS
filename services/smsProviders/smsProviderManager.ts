@@ -1,5 +1,6 @@
 import type { SMSProvider, SMSProviderConfig } from './types';
 import { TwilioProvider } from './twilioProvider';
+import { MessageBirdProvider } from './messageBirdProvider';
 
 export class SMSProviderManager {
     private static instance: SMSProviderManager;
@@ -20,6 +21,7 @@ export class SMSProviderManager {
 
     private registerDefaultProviders(): void {
         this.registerProvider(new TwilioProvider());
+        this.registerProvider(new MessageBirdProvider());
         // Add more providers here as they are implemented
     }
 

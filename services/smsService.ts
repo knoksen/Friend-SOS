@@ -46,4 +46,41 @@ export class SMSService {
 
         return activeProvider.sendSMS(options);
     }
+
+    public async sendBulkSMS(
+        recipients: string[],
+        message: string,
+        from?: string
+    ): Promise<Array<{ to: string; messageId: string; error?: string }>> {
+        const activeProvider = this.providerManager.getActiveProvider();
+        
+        if (!activeProvider) {
+            throw new Error("No SMS provider configured. Please configure a provider first.");
+        }
+
+        // Create a queue to manage rate limiting
+        const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+        const RATE_LIMIT_DELAY = 100; // 100ms between messages to prevent flooding
+
+        const results = [];
+        for (const recipient of recipients) {
+            try {
+                const result = await activeProvider.sendSMS({
+                    to: recipient,
+                    message,
+                    from
+                });
+                results.push({ to: recipient, messageId: result.messageId });
+                await delay(RATE_LIMIT_DELAY);
+            } catch (error) {
+                results.push({
+                    to: recipient,
+                    messageId: '',
+                    error: error instanceof Error ? error.message : 'Failed to send SMS'
+                });
+            }
+        }
+
+        return results;
+    }
 }
