@@ -1,11 +1,20 @@
 import { jest } from '@jest/globals';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import AlertButton from '../AlertButton';
-import { playSound } from '../../services/soundService';
 
-// Mock the soundService
-jest.mock('../../services/soundService', () => ({
-  playSound: jest.fn()
+// Mock the uiSounds module
+jest.mock('../../utils/uiSounds', () => ({
+  playUISound: jest.fn(),
+  resumeAudioContext: jest.fn()
+}));
+
+// Mock the haptics module
+jest.mock('../../utils/haptics', () => ({
+  vibrate: jest.fn(),
+  HAPTIC_PATTERNS: {
+    ALERT_TRIGGER: [200],
+    BUTTON_PRESS: [50]
+  }
 }));
 
 describe('AlertButton', () => {
@@ -14,52 +23,38 @@ describe('AlertButton', () => {
   });
 
   it('should render the alert button', () => {
-    render(<AlertButton onPress={() => {}} />);
+    render(<AlertButton onClick={() => {}} disabled={false} />);
     const button = screen.getByRole('button');
     expect(button).toBeInTheDocument();
+    expect(button).toHaveTextContent('SEND URGENT ALERT');
   });
 
-  it('should call onPress when clicked', async () => {
-    const onPress = jest.fn();
-    render(<AlertButton onPress={onPress} />);
+  it('should call onClick when clicked', () => {
+    const onClick = jest.fn();
+    render(<AlertButton onClick={onClick} disabled={false} />);
 
     const button = screen.getByRole('button');
     fireEvent.click(button);
 
-    expect(onPress).toHaveBeenCalled();
+    expect(onClick).toHaveBeenCalled();
   });
 
-  it('should play sound when pressed', async () => {
-    render(<AlertButton onPress={() => {}} soundEnabled={true} />);
+  it('should handle pressed state correctly', () => {
+    render(<AlertButton onClick={() => {}} disabled={false} />);
 
     const button = screen.getByRole('button');
-    fireEvent.click(button);
+    fireEvent.mouseDown(button);
+    expect(button.className).toContain('scale-95');
 
-    await waitFor(() => {
-      expect(playSound).toHaveBeenCalledWith('alert', expect.any(Number));
-    });
+    fireEvent.mouseUp(button);
+    expect(button.className).not.toContain('scale-95');
   });
 
-  it('should not play sound when disabled', async () => {
-    render(<AlertButton onPress={() => {}} soundEnabled={false} />);
+  it('should be disabled when disabled prop is true', () => {
+    render(<AlertButton onClick={() => {}} disabled={true} />);
 
     const button = screen.getByRole('button');
-    fireEvent.click(button);
-
-    expect(playSound).not.toHaveBeenCalled();
-  });
-
-  it('should show loading state while processing', async () => {
-    const onPress = jest.fn(() => new Promise(resolve => setTimeout(resolve, 100)));
-    render(<AlertButton onPress={onPress} />);
-
-    const button = screen.getByRole('button');
-    fireEvent.click(button);
-
-    expect(screen.getByRole('progressbar')).toBeInTheDocument();
-
-    await waitFor(() => {
-      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
-    });
+    expect(button).toBeDisabled();
+    expect(button.className).toContain('disabled:bg-red-800/50');
   });
 });

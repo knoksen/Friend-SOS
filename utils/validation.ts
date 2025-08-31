@@ -3,7 +3,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // A lenient regex for phone numbers: allows digits, (), -, +, and spaces.
 // Requires at least 7 digits to be considered a potential phone number.
-const PHONE_REGEX = /^(?=.*\d)[\d\s()+-]{7,}$/;
+const PHONE_REGEX = /^(?=.*\d{7})[\d\s()+-]+$/;
 
 /**
  * Validates a location object.

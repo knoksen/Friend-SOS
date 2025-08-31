@@ -11,37 +11,31 @@ describe('LocationInfo', () => {
   };
 
   it('should render location information', () => {
-    render(<LocationInfo location={mockLocation} />);
+    render(<LocationInfo location={mockLocation} includeLocation={true} onToggleInclude={() => {}} isLoading={false} error={null} />);
 
-    expect(screen.getByText(/Latitude:/)).toBeInTheDocument();
-    expect(screen.getByText(/40.7128/)).toBeInTheDocument();
-    expect(screen.getByText(/Longitude:/)).toBeInTheDocument();
-    expect(screen.getByText(/-74.0060/)).toBeInTheDocument();
-    expect(screen.getByText(/Accuracy:/)).toBeInTheDocument();
-    expect(screen.getByText(/10m/)).toBeInTheDocument();
+    expect(screen.getByText('Location captured')).toBeInTheDocument();
+    expect(screen.getByText('View on Map')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: /Current location map/i })).toBeInTheDocument();
   });
 
-  it('should show "Acquiring location..." when no location is provided', () => {
-    render(<LocationInfo location={null} />);
-    expect(screen.getByText(/Acquiring location.../)).toBeInTheDocument();
+  it('should show loading state', () => {
+    render(<LocationInfo location={null} includeLocation={true} onToggleInclude={() => {}} isLoading={true} error={null} />);
+    expect(screen.getByText('Fetching location...')).toBeInTheDocument();
   });
 
   it('should show error message when there is a location error', () => {
-    render(<LocationInfo location={null} error="Location access denied" />);
-    expect(screen.getByText(/Location access denied/)).toBeInTheDocument();
+    render(<LocationInfo location={null} includeLocation={true} onToggleInclude={() => {}} isLoading={false} error="Location access denied" />);
+    expect(screen.getByText('Location access denied')).toBeInTheDocument();
   });
 
-  it('should format coordinates correctly', () => {
+  it('should handle precise coordinates correctly', () => {
     const preciseLocation = {
       latitude: 40.71284532,
       longitude: -74.00602345,
-      accuracy: 5.5,
-      timestamp: new Date().getTime()
     };
 
-    render(<LocationInfo location={preciseLocation} />);
-    expect(screen.getByText(/40.7128/)).toBeInTheDocument(); // Should round to 4 decimal places
-    expect(screen.getByText(/-74.0060/)).toBeInTheDocument();
-    expect(screen.getByText(/5.5m/)).toBeInTheDocument();
+    render(<LocationInfo location={preciseLocation} includeLocation={true} onToggleInclude={() => {}} isLoading={false} error={null} />);
+    const mapLink = screen.getByRole('link', { name: /View on Map/i });
+    expect(mapLink).toHaveAttribute('href', expect.stringContaining('40.71284532,-74.00602345'));
   });
 });
