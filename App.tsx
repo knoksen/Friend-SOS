@@ -14,6 +14,9 @@ import { isValidContact } from './utils/validation';
 import LocationInfo from './components/LocationInfo';
 import SettingsPage from './components/SettingsPage';
 import MessageTemplateSelector from './components/MessageTemplateSelector';
+import Toast from './components/Toast';
+import Skeleton from './components/Skeleton';
+import TutorialManager from './components/TutorialManager';
 
 
 // Fix for SpeechRecognition API types which are not in default TS lib.
@@ -77,9 +80,17 @@ type GeolocationCoords = {
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const speechRecognitionSupported = !!SpeechRecognition;
 
+type ToastMessage = {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'info';
+};
+
 const App: React.FC = () => {
   const [name, setName] = useState<string>('');
   const [contacts, setContacts] = useState<string[]>([]);
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
+  const [isInitializing, setIsInitializing] = useState(true);
   const [message, setMessage] = useState<string>('');
   const [selectedSound, setSelectedSound] = useState<string>('default');
   const [volume, setVolume] = useState<number>(0.5);
@@ -99,6 +110,45 @@ const App: React.FC = () => {
   const [temperature, setTemperature] = useState<number>(0.2);
   const [customSystemInstruction, setCustomSystemInstruction] = useState<string>('');
   const [templates, setTemplates] = useState<MessageTemplate[]>([]);
+
+  const showToast = useCallback((message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, message, type }]);
+    return id;
+  }, []);
+
+  const removeToast = useCallback((id: number) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  }, []);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // Ctrl/Cmd + Enter to send alert
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !isLoading && name.trim() && allContactsValid) {
+        e.preventDefault();
+        handleSendAlert();
+      }
+      // Ctrl/Cmd + M to toggle microphone
+      if ((e.ctrlKey || e.metaKey) && e.key === 'm' && speechRecognitionSupported) {
+        e.preventDefault();
+        handleToggleListening();
+      }
+      // Esc to reset form when alert is shown
+      if (e.key === 'Escape' && generatedAlert) {
+        e.preventDefault();
+        resetForm();
+      }
+      // Ctrl/Cmd + , to toggle settings
+      if ((e.ctrlKey || e.metaKey) && e.key === ',') {
+        e.preventDefault();
+        setShowSettings(prev => !prev);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [handleSendAlert, handleToggleListening, generatedAlert, isLoading, name, allContactsValid]);
 
   useEffect(() => {
     // PWA Service Worker Registration
@@ -284,9 +334,12 @@ const App: React.FC = () => {
       });
       setGeneratedAlert(alertContent);
       playSound(selectedSound, volume);
+      showToast('Alert generated successfully!', 'success');
     } catch (e) {
       const err = e as Error;
-      setError(`Failed to send alert. ${err.message}. Ensure your API key is configured correctly.`);
+      const errorMessage = `Failed to send alert. ${err.message}. Ensure your API key is configured correctly.`;
+      setError(errorMessage);
+      showToast(errorMessage, 'error');
       console.error(e);
     } finally {
       setIsLoading(false);
@@ -318,14 +371,72 @@ const App: React.FC = () => {
 
   const allContactsValid = contacts.length > 0 && contacts.every(isValidContact);
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // Ctrl/Cmd + Enter to send alert
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !isLoading && name.trim() && allContactsValid) {
+        e.preventDefault();
+        handleSendAlert();
+      }
+      // Ctrl/Cmd + M to toggle microphone
+      if ((e.ctrlKey || e.metaKey) && e.key === 'm' && speechRecognitionSupported) {
+        e.preventDefault();
+        handleToggleListening();
+      }
+      // Esc to reset form when alert is shown
+      if (e.key === 'Escape' && generatedAlert) {
+        e.preventDefault();
+        resetForm();
+      }
+      // Ctrl/Cmd + , to toggle settings
+      if ((e.ctrlKey || e.metaKey) && e.key === ',') {
+        e.preventDefault();
+        setShowSettings(prev => !prev);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [handleSendAlert, handleToggleListening, generatedAlert, isLoading, name, allContactsValid]);
+
+  if (isInitializing) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center justify-center p-4 font-sans">
+        <div className="w-full max-w-lg mx-auto space-y-6">
+          <Skeleton height="h-16" className="rounded-t-2xl" /> {/* Header */}
+          <div className="space-y-4 p-6">
+            <Skeleton height="h-12" /> {/* Name input */}
+            <Skeleton height="h-24" /> {/* Contacts input */}
+            <Skeleton height="h-16" /> {/* Sound selector */}
+            <Skeleton height="h-12" /> {/* Location info */}
+            <Skeleton height="h-32" /> {/* Message input */}
+            <Skeleton height="h-14" className="w-full" /> {/* Send button */}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center justify-center p-4 font-sans [perspective:1000px]">
-      <div 
-        className={`w-full max-w-lg mx-auto transition-transform duration-700 [transform-style:preserve-3d] ${showSettings ? '[transform:rotateY(180deg)]' : ''}`}
-      >
-        {/* Front of Card: Main App */}
-        <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-2xl shadow-red-500/10 overflow-hidden [backface-visibility:hidden]">
-          <Header onSettingsClick={() => setShowSettings(true)} />
+      {/* Toast Messages */}
+      {toasts.map(toast => (
+        <Toast
+          key={toast.id}
+          message={toast.message}
+          type={toast.type}
+          onClose={() => removeToast(toast.id)}
+        />
+      ))}
+
+      <TutorialManager>
+        <div 
+          className={`w-full max-w-lg mx-auto transition-transform duration-700 [transform-style:preserve-3d] ${showSettings ? '[transform:rotateY(180deg)]' : ''}`}
+        >
+          {/* Front of Card: Main App */}
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-2xl shadow-red-500/10 overflow-hidden [backface-visibility:hidden]">
+            <Header onSettingsClick={() => setShowSettings(true)} />
 
           <div className="p-6 md:p-8 space-y-6">
             {generatedAlert ? (

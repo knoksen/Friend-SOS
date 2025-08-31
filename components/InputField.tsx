@@ -25,7 +25,7 @@ const InputField: React.FC<InputFieldProps> = ({
   isListening = false,
   onVoiceClick
 }) => {
-  const commonClasses = "w-full bg-gray-900/70 border border-gray-700 rounded-lg px-4 py-3 text-gray-200 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all duration-300 placeholder-gray-500";
+  const commonClasses = "w-full bg-gray-900/70 border border-gray-700 rounded-lg px-4 py-3 text-gray-200 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all duration-300 placeholder-gray-500 hover:border-gray-600 focus:shadow-lg focus:shadow-red-500/10";
   
   return (
     <div>
@@ -47,15 +47,23 @@ const InputField: React.FC<InputFieldProps> = ({
               type="button"
               onClick={onVoiceClick}
               aria-label={isListening ? 'Stop recording' : 'Start recording'}
-              className={`absolute top-1/2 right-3 -translate-y-1/2 p-2 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-red-500 ${
+              title={isListening ? 'Stop recording' : 'Start recording'}
+              className={`absolute top-1/2 right-3 -translate-y-1/2 p-2 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-red-500 hover:scale-110 ${
                 isListening 
-                  ? 'bg-red-600 text-white animate-pulse' 
-                  : 'bg-gray-700/80 text-gray-300 hover:bg-red-600 hover:text-white'
+                  ? 'bg-red-600 text-white animate-pulse shadow-lg shadow-red-500/30' 
+                  : 'bg-gray-700/80 text-gray-300 hover:bg-red-600 hover:text-white hover:shadow-lg hover:shadow-red-500/20'
               }`}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                className={`h-5 w-5 transition-transform ${isListening ? 'scale-110' : ''}`} 
+                viewBox="0 0 20 20" 
+                fill="currentColor"
+                aria-hidden="true"
+              >
                 <path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93V17h-2v-2.07A6.984 6.984 0 013.1 9H1V7h2.1A7.002 7.002 0 0115.9 7H18v2h-2.1c-.464 2.306-2.288 4.223-4.8 4.93z" clipRule="evenodd" />
               </svg>
+              <span className="sr-only">{isListening ? 'Stop recording' : 'Start recording'}</span>
             </button>
           )}
         </div>
