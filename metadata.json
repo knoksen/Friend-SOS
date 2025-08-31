@@ -1,0 +1,7 @@
+{
+  "name": "Friend SOS",
+  "description": "A simple application for close friends to send an urgent notification, like a personal 911 alert.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
