@@ -1,13 +1,13 @@
 
 # Friend-SOS - Personal Emergency Alert PWA
 
-![GitHub repo size](https://img.shields.io/github/repo-size/your-username/friend-sos?style=for-the-badge)
-![GitHub last commit](https://img.shields.io/github/last-commit/your-username/friend-sos?style=for-the-badge)
-![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)end SOS - Personal Emergency Alert PWA
-
-![GitHub repo size](https://img.shields.io/github/repo-size/your-username/friend-sos?style=for-the-badge)
-![GitHub last commit](https://img.shields.io/github/last-commit/your-username/friend-sos?style=for-the-badge)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/knoksen/friend-sos?style=for-the-badge)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/knoksen/friend-sos/main.yml?style=for-the-badge)
+![GitHub repo size](https://img.shields.io/github/repo-size/knoksen/friend-sos?style=for-the-badge)
+![GitHub last commit](https://img.shields.io/github/last-commit/knoksen/friend-sos?style=for-the-badge)
 ![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)
+[![Deploy with Vercel](https://img.shields.io/badge/Vercel-Deploy-black?style=for-the-badge&logo=vercel)](https://vercel.com/import/git?s=https://github.com/knoksen/friend-sos)
+[![Open in StackBlitz](https://img.shields.io/badge/StackBlitz-Start-blue?style=for-the-badge&logo=stackblitz)](https://stackblitz.com/github/knoksen/friend-sos)
 
 **Friend SOS** is a modern, installable Progressive Web App (PWA) designed to provide a fast and simple way to send a detailed emergency alert to a predefined list of contacts. It leverages the Google Gemini API to intelligently craft a clear, concise SOS message, and uses your device's native capabilities to dispatch it instantly.
 
@@ -211,40 +211,6 @@ Contributions are welcome! If you have ideas for new features or improvements, p
 5. Push to the branch (`git push origin feature/your-feature-name`).
 6. Open a Pull Request.
 
-## 📲 Installation Guide
-
-Because this is a Progressive Web App (PWA), you can install it on almost any device for a native-app experience.
-
-### Android (Chrome)
-
-1. Open the deployed app URL in Chrome
-2. Tap the three-dot menu icon in the top right
-3. Select **"Install app"** or **"Add to Home screen"**
-4. The Friend SOS icon will appear on your home screen
-
-### iOS (Safari)
-
-1. Open the deployed app URL in Safari
-2. Tap the "Share" icon (square with an up arrow)
-3. Scroll down and select **"Add to Home Screen"**
-4. Confirm the name and tap "Add"
-
-### Desktop (Chrome, Edge)
-
-1. Open the deployed app URL in your browser
-2. Look for the "Install" icon in the address bar
-3. Click it to install as a desktop application
-
-## 🤝 Contributing
-
-Contributions are welcome! If you have ideas for new features or improvements, please follow these steps:
-1.  Fork the repository.
-2.  Create a new branch (`git checkout -b feature/your-feature-name`).
-3.  Make your changes.
-4.  Commit your changes (`git commit -m 'Add some amazing feature'`).
-5.  Push to the branch (`git push origin feature/your-feature-name`).
-6.  Open a Pull Request.
-
-## 📄 License
+##  License
 
 This project is licensed under the **MIT License**. See the `LICENSE` file for details.

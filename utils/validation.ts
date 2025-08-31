@@ -1,9 +1,9 @@
 // A simple regex for email validation
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// A lenient regex for phone numbers: allows digits, (), -, +, and spaces.
-// Requires at least 7 digits to be considered a potential phone number.
-const PHONE_REGEX = /^(?=.*\d{7})[\d\s()+-]+$/;
+// A flexible regex for phone numbers: allows digits, (), -, +, and spaces.
+// Handles formats like: +1234567890, 123-456-7890, (123) 456-7890
+const PHONE_REGEX = /^(?:\+?1[-\s]*)?(?:\([2-9]\d{2}\)|\d{3})[-.\s]*[2-9]\d{2}[-.\s]*\d{4}$/;
 
 /**
  * Validates a location object.

@@ -45,3 +45,51 @@ Object.defineProperty(window, 'localStorage', {
   value: mockLocalStorage,
   configurable: true
 });
+
+// Mock fetch API
+const mockFetch = jest.fn().mockImplementation((url: string | URL | Request) => {
+  if (url.toString().includes('geocoding')) {
+    return Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve({
+        road: 'Test Street',
+        city: 'Test City',
+        country: 'Test Country',
+        postcode: '12345'
+      }),
+      text: () => Promise.resolve(''),
+      status: 200,
+      statusText: 'OK',
+      headers: new Headers()
+    } as Response);
+  }
+  
+  if (url.toString().includes('emergency')) {
+    return Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve([
+        {
+          name: 'Test Hospital',
+          type: 'hospital',
+          distance: 1000,
+          coordinates: [0, 0]
+        }
+      ]),
+      text: () => Promise.resolve(''),
+      status: 200,
+      statusText: 'OK',
+      headers: new Headers()
+    } as Response);
+  }
+
+  return Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({}),
+    text: () => Promise.resolve(''),
+    status: 200,
+    statusText: 'OK',
+    headers: new Headers()
+  } as Response);
+});
+
+(global as any).fetch = mockFetch;

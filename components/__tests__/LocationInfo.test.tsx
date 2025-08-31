@@ -10,8 +10,40 @@ describe('LocationInfo', () => {
     timestamp: new Date().getTime()
   };
 
-  it('should render location information', () => {
+  it('should render location information', async () => {
+    const mockFetch = jest.fn();
+    
+    mockFetch.mockImplementation(async (url: string | URL | Request) => {
+      if (url.toString().includes('reverse')) {
+        return {
+          ok: true,
+          json: () => Promise.resolve({
+            road: 'Test Street',
+            city: 'Test City',
+            country: 'Test Country',
+            postcode: '12345'
+          })
+        } as Response;
+      }
+
+      return {
+        ok: true,
+        json: () => Promise.resolve([{
+          name: 'Test Hospital',
+          type: 'hospital',
+          distance: 1000,
+          coordinates: [0, 0]
+        }])
+      } as Response;
+    });
+
+    // Override the global fetch
+    (global as any).fetch = mockFetch;
+
     render(<LocationInfo location={mockLocation} includeLocation={true} onToggleInclude={() => {}} isLoading={false} error={null} />);
+
+    // Wait for location details to be fetched
+    await screen.findByText('Location captured');
 
     expect(screen.getByText('Location captured')).toBeInTheDocument();
     expect(screen.getByText('View on Map')).toBeInTheDocument();

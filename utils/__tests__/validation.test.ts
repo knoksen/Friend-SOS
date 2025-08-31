@@ -29,10 +29,14 @@ describe('validation', () => {
   describe('validatePhoneNumber', () => {
     it('should validate valid phone numbers', () => {
       const validNumbers = [
-        '+1234567890',
-        '123-456-7890',
-        '(123) 456-7890'
-      ];
+        '+12345678901',
+        '+1 2345678901',
+        '234-567-8901',
+        '(234) 567-8901',
+        '234.567.8901',
+        '234 567 8901',
+        '2345678901'
+      ].map(num => num.trim());
 
       validNumbers.forEach(number => {
         expect(validatePhoneNumber(number)).toBe(true);
@@ -43,7 +47,12 @@ describe('validation', () => {
       const invalidNumbers = [
         '123', // Too short
         'abc-def-ghij', // Contains letters
-        '+1234567890123456' // Too long
+        '+1234567890123456', // Too long
+        '12-34-56', // Incomplete
+        '123.ABC.7890', // Contains letters
+        '++1234567890', // Double plus
+        ' ', // Empty/whitespace
+        '(123)4567890' // Missing space after parentheses
       ];
 
       invalidNumbers.forEach(number => {
@@ -67,9 +76,9 @@ describe('validation', () => {
 
     it('should reject invalid settings object', () => {
       const invalidSettings = {
-        enableSound: 'yes', // Should be boolean
-        soundType: 123, // Should be string
-        contacts: 'contact', // Should be array
+        enableSound: true,
+        soundType: 123 as any, // Should be string
+        contacts: ['invalid-contact'], // Invalid contact format
         messageTemplate: '', // Empty string
         checkInInterval: -1 // Negative number
       };
