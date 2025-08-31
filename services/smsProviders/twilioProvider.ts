@@ -72,7 +72,11 @@ export class TwilioProvider implements SMSProvider {
                         'Content-Type': 'application/x-www-form-urlencoded',
                         'Authorization': 'Basic ' + btoa(`${this.accountSid}:${this.authToken}`)
                     },
-                    body: new URLSearchParams(message).toString()
+                    body: new URLSearchParams({
+                        Body: message.body,
+                        To: message.to,
+                        From: message.from
+                    }).toString()
                 }
             );
 

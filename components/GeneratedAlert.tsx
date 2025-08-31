@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { AlertContent, AlertStatus } from '../types';
 import { getContactType, formatPhoneNumberForURL } from '../utils/validation';
 import ProgressBar from './ProgressBar';
+import { useSMS } from '../hooks/useSMS';
+import Toast from './Toast';
 
 interface GeneratedAlertProps {
   alert: AlertContent;
@@ -51,6 +53,20 @@ const ActionButton: React.FC<{href: string; label: string; children: React.React
 const GeneratedAlert: React.FC<GeneratedAlertProps> = ({ alert, onReset, contacts }) => {
   const encodedTitle = encodeURIComponent(alert.title);
   const encodedBody = encodeURIComponent(alert.body);
+  const { sending, error, sendSMS, isConfigured } = useSMS();
+  const [sendingTo, setSendingTo] = useState<string | null>(null);
+  const [showError, setShowError] = useState<string | null>(null);
+
+  const handleSendSMS = async (phoneNumber: string) => {
+    setSendingTo(phoneNumber);
+    try {
+      await sendSMS(phoneNumber, alert.body);
+    } catch (err) {
+      setShowError(err instanceof Error ? err.message : 'Failed to send SMS');
+    } finally {
+      setSendingTo(null);
+    }
+  };
 
   const steps = [
     { label: 'Validating', completed: true, current: alert.status === 'validating' },
@@ -110,7 +126,22 @@ const GeneratedAlert: React.FC<GeneratedAlertProps> = ({ alert, onReset, contact
                             {contactType === 'phone' && (
                                 <>
                                     <ActionButton href={`tel:${phoneUrl}`} label={`Call ${contact}`}><CallIcon /></ActionButton>
-                                    <ActionButton href={`sms:${phoneUrl}?&body=${encodedBody}`} label={`SMS ${contact}`}><SmsIcon /></ActionButton>
+                                    {isConfigured ? (
+                                        <button
+                                            onClick={() => handleSendSMS(phoneUrl)}
+                                            disabled={sending && sendingTo === phoneUrl}
+                                            aria-label={`Send SMS to ${contact}`}
+                                            title={sending && sendingTo === phoneUrl ? 'Sending...' : 'Send SMS'}
+                                            className={`p-2 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-red-500
+                                                ${sending && sendingTo === phoneUrl 
+                                                    ? 'bg-yellow-600/80 text-white cursor-wait' 
+                                                    : 'bg-gray-700/80 text-gray-300 hover:bg-red-600 hover:text-white'}`}
+                                        >
+                                            <SmsIcon />
+                                        </button>
+                                    ) : (
+                                        <ActionButton href={`sms:${phoneUrl}?&body=${encodedBody}`} label={`SMS ${contact}`}><SmsIcon /></ActionButton>
+                                    )}
                                     <ActionButton href={`https://wa.me/${phoneUrl}?text=${encodedBody}`} label={`WhatsApp ${contact}`}><WhatsAppIcon /></ActionButton>
                                 </>
                             )}
@@ -142,6 +173,15 @@ const GeneratedAlert: React.FC<GeneratedAlertProps> = ({ alert, onReset, contact
       >
         Create Another Alert
       </button>
+
+      {showError && (
+        <Toast
+          message={showError}
+          type="error"
+          onClose={() => setShowError(null)}
+          autoHideDuration={5000}
+        />
+      )}
     </div>
   );
 };
