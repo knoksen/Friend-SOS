@@ -1,0 +1,71 @@
+.update-prompt {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #1F2937;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 16px;
+  z-index: 9999;
+  max-width: 90%;
+  width: 400px;
+  color: white;
+}
+
+.update-prompt-content {
+  text-align: center;
+}
+
+.update-prompt h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  color: #DC2626;
+}
+
+.update-prompt p {
+  margin: 0 0 16px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.update-prompt button {
+  margin: 0 8px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#update-button {
+  background-color: #DC2626;
+  color: white;
+  border: none;
+}
+
+#update-button:hover {
+  background-color: #B91C1C;
+}
+
+#update-later {
+  background-color: transparent;
+  color: #9CA3AF;
+  border: 1px solid #4B5563;
+}
+
+#update-later:hover {
+  background-color: rgba(75, 85, 99, 0.1);
+}
+
+/* Light mode support */
+@media (prefers-color-scheme: light) {
+  .update-prompt {
+    background-color: white;
+    color: #111827;
+  }
+
+  #update-later {
+    color: #4B5563;
+  }
+}

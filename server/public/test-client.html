@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Push Notification Test Client</title>
+    <style>
+        body {
+            font-family: -apple-system, system-ui, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .card {
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        #log {
+            background: #2b2b2b;
+            color: #ffffff;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 20px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+        }
+        .error { color: #ff6b6b; }
+        .success { color: #69db7c; }
+    </style>
+</head>
+<body>
+    <h1>Push Notification Test Client</h1>
+    
+    <div class="card">
+        <h2>Notification Permission</h2>
+        <button id="requestPermission">Request Permission</button>
+        <p>Current status: <span id="permissionStatus">checking...</span></p>
+    </div>
+
+    <div class="card">
+        <h2>Push Subscription</h2>
+        <button id="subscribe">Subscribe</button>
+        <button id="unsubscribe">Unsubscribe</button>
+    </div>
+
+    <div class="card">
+        <h2>Test Notifications</h2>
+        <button id="testEmergency">Test Emergency Alert</button>
+        <button id="testCheckin">Test Check-in Reminder</button>
+    </div>
+
+    <div id="log"></div>
+
+    <script>
+        const serverUrl = 'http://localhost:3001'; // Change this to your server URL
+        const log = document.getElementById('log');
+        let pushSubscription = null;
+
+        function logMessage(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
+            entry.className = type;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        async function updatePermissionStatus() {
+            const status = document.getElementById('permissionStatus');
+            status.textContent = Notification.permission;
+        }
+
+        async function requestNotificationPermission() {
+            try {
+                const permission = await Notification.requestPermission();
+                logMessage(`Notification permission: ${permission}`, permission === 'granted' ? 'success' : 'error');
+                updatePermissionStatus();
+            } catch (error) {
+                logMessage(`Error requesting permission: ${error.message}`, 'error');
+            }
+        }
+
+        async function subscribeToPush() {
+            try {
+                const registration = await navigator.serviceWorker.ready;
+                const subscription = await registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: 'YOUR_VAPID_PUBLIC_KEY' // Replace with your VAPID public key
+                });
+
+                pushSubscription = subscription;
+                
+                await fetch(`${serverUrl}/api/push/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(subscription)
+                });
+
+                logMessage('Successfully subscribed to push notifications', 'success');
+            } catch (error) {
+                logMessage(`Failed to subscribe: ${error.message}`, 'error');
+            }
+        }
+
+        async function unsubscribeFromPush() {
+            try {
+                const registration = await navigator.serviceWorker.ready;
+                const subscription = await registration.pushManager.getSubscription();
+                
+                if (subscription) {
+                    await subscription.unsubscribe();
+                    await fetch(`${serverUrl}/api/push/unregister`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(subscription)
+                    });
+                    pushSubscription = null;
+                    logMessage('Successfully unsubscribed from push notifications', 'success');
+                }
+            } catch (error) {
+                logMessage(`Failed to unsubscribe: ${error.message}`, 'error');
+            }
+        }
+
+        async function testEmergencyAlert() {
+            try {
+                const response = await fetch(`${serverUrl}/api/push/send-emergency`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: 'Test emergency alert',
+                        location: {
+                            latitude: 40.7128,
+                            longitude: -74.0060
+                        }
+                    })
+                });
+                const result = await response.json();
+                logMessage(`Emergency alert sent: ${JSON.stringify(result)}`, 'success');
+            } catch (error) {
+                logMessage(`Failed to send emergency alert: ${error.message}`, 'error');
+            }
+        }
+
+        async function testCheckinReminder() {
+            try {
+                const response = await fetch(`${serverUrl}/api/push/send-checkin`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: 'test-user',
+                        checkInInterval: 3600
+                    })
+                });
+                const result = await response.json();
+                logMessage(`Check-in reminder sent: ${JSON.stringify(result)}`, 'success');
+            } catch (error) {
+                logMessage(`Failed to send check-in reminder: ${error.message}`, 'error');
+            }
+        }
+
+        // Event Listeners
+        document.getElementById('requestPermission').addEventListener('click', requestNotificationPermission);
+        document.getElementById('subscribe').addEventListener('click', subscribeToPush);
+        document.getElementById('unsubscribe').addEventListener('click', unsubscribeFromPush);
+        document.getElementById('testEmergency').addEventListener('click', testEmergencyAlert);
+        document.getElementById('testCheckin').addEventListener('click', testCheckinReminder);
+
+        // Initialize
+        updatePermissionStatus();
+
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(() => logMessage('Service Worker registered successfully', 'success'))
+                .catch(error => logMessage(`Service Worker registration failed: ${error.message}`, 'error'));
+        }
+    </script>
+</body>
+</html>

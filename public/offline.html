@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - Friend SOS</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #111827;
+            color: #fff;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+        }
+
+        h1 {
+            color: #DC2626;
+            margin-bottom: 16px;
+        }
+
+        .icon {
+            width: 96px;
+            height: 96px;
+            margin-bottom: 24px;
+        }
+
+        .message {
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .retry-button {
+            background-color: #DC2626;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .retry-button:hover {
+            background-color: #B91C1C;
+        }
+
+        .status {
+            margin-top: 16px;
+            font-size: 14px;
+            color: #9CA3AF;
+        }
+
+        /* Add dark mode support */
+        @media (prefers-color-scheme: light) {
+            body {
+                background-color: #F3F4F6;
+                color: #111827;
+            }
+
+            .status {
+                color: #4B5563;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="/icons/icon-96.png" alt="Friend SOS Logo" class="icon">
+        <h1>You're Offline</h1>
+        <p class="message">
+            Don't worry! Friend SOS still works offline. You can send emergency alerts and use basic features.
+            Some advanced features might be limited until you're back online.
+        </p>
+        <button class="retry-button" onclick="window.location.reload()">
+            Try Again
+        </button>
+        <p class="status">
+            Checking connection status...
+        </p>
+    </div>
+    <script>
+        // Update status message when online/offline status changes
+        function updateStatus() {
+            const statusElement = document.querySelector('.status');
+            if (navigator.onLine) {
+                statusElement.textContent = 'Back online! Reloading...';
+                setTimeout(() => window.location.reload(), 1000);
+            } else {
+                statusElement.textContent = 'Still offline. Waiting for connection...';
+            }
+        }
+
+        window.addEventListener('online', updateStatus);
+        window.addEventListener('offline', updateStatus);
+        updateStatus();
+    </script>
+</body>
+</html>
