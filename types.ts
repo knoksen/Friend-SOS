@@ -6,11 +6,6 @@ export interface AlertContent {
   status?: AlertStatus;
 }
 
-export interface MessageTemplate {
-  id: string;
-  title: string;
-  message: string;
-}
 
 export interface EmergencyContact {
   id: string;

@@ -1,5 +1,9 @@
 
-# Friend SOS - Personal Emergency Alert PWA
+# Friend-SOS - Personal Emergency Alert PWA
+
+![GitHub repo size](https://img.shields.io/github/repo-size/your-username/friend-sos?style=for-the-badge)
+![GitHub last commit](https://img.shields.io/github/last-commit/your-username/friend-sos?style=for-the-badge)
+![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)end SOS - Personal Emergency Alert PWA
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/your-username/friend-sos?style=for-the-badge)
 ![GitHub last commit](https://img.shields.io/github/last-commit/your-username/friend-sos?style=for-the-badge)
@@ -15,17 +19,84 @@
 
 ## ✨ Key Features
 
-- **🤖 Multi-Provider AI Alert Generation:** Flexibly choose between Gemini, OpenAI, and Anthropic to transform your message into a well-formatted, urgent alert.
-- **📲 One-Click Dispatch Center:** After generating an alert, instantly open your device's native apps (Phone, SMS, WhatsApp, Email, Telegram) with the message and contact pre-filled.
-- **🎤 Voice-to-Text:** Use your microphone to speak your emergency message directly into the app.
-- **📍 Geolocation Sharing:** Automatically detects and appends your GPS coordinates (with a Google Maps link) to the alert. This feature is fully controllable with a privacy toggle.
-- **✅ Real-time Contact Validation:** Get immediate visual feedback on whether entered contacts are valid emails or phone numbers.
-- **🎵 Customizable Alert Sounds:** Choose from multiple alert tones or vibration, control the volume, and preview the sound before sending.
-- **💾 Persistent State:** All your settings—contacts, default name, sound preferences, volume, and message templates—are saved in your browser's local storage.
-- **📝 Message Templates:** Create and save pre-written messages for common scenarios to send alerts even faster.
-- **⚙️ Advanced AI Controls:** Configure multiple AI providers, fine-tune the AI's creativity with a `Temperature` slider, and customize system instructions for each provider.
-- **📱 Installable PWA:** Add Friend SOS to your phone's home screen for an app-like experience with offline support.
-- **🎨 Modern & Responsive UI:** A clean, intuitive interface built with Tailwind CSS that works seamlessly on any device.
+### 🆘 Core Emergency Features
+- **🤖 Multi-Provider AI Alert Generation:** Choose between Gemini, OpenAI, and Anthropic to transform your message into a well-formatted, urgent alert.
+- **📲 Multi-Provider SMS Integration:** Support for multiple SMS providers (Twilio, MessageBird) with automatic fallback for enhanced reliability.
+- **🗣️ Voice Commands:** Trigger alerts, respond to check-ins, and control the app using natural voice commands (e.g., "Friend SOS emergency").
+- **📍 Enhanced Location Services:**
+  - Real-time location tracking with periodic updates
+  - Reverse geocoding for human-readable addresses
+  - Nearby emergency services finder (hospitals, police, fire stations)
+  - Static and interactive maps
+  - Emergency service contact information
+
+### 👥 Contact Management
+- **📇 Comprehensive Contact System:**
+  - Contact groups and lists
+  - Priority levels
+  - Custom notes and tags
+  - Import/export functionality
+- **✅ Real-time Contact Validation:** Immediate visual feedback for valid emails and phone numbers
+- **👥 Emergency Lists:** Create and manage groups of contacts for different scenarios
+- **📊 Contact Analytics:** Track message history and response times
+
+### ⏰ Check-in System
+- **🔄 Automated Check-ins:**
+  - Scheduled periodic check-ins
+  - Customizable intervals and duration
+  - Multiple notification attempts
+  - Escalation system for missed check-ins
+- **� Smart Escalation:**
+  - Custom escalation delays
+  - Prioritized contact notifications
+  - Location sharing during escalation
+  - Custom escalation messages
+- **📝 Check-in History:** Complete log of check-ins and responses
+
+### 📝 Message Templates
+- **📋 Template Management:**
+  - Contact-specific templates
+  - Category-based organization
+  - Variable placeholders
+  - Usage tracking
+- **🏷️ Template Tagging:** Organize templates by purpose or scenario
+- **📊 Template Analytics:** Track usage patterns and effectiveness
+- **🔄 Dynamic Variables:** Support for location, medical conditions, and custom variables
+
+### 🎵 Alert System
+- **🔊 Customizable Alerts:**
+  - Multiple alert tones
+  - Vibration patterns
+  - Volume control
+  - Sound preview
+- **📱 Multi-Channel Dispatch:**
+  - SMS (multiple providers)
+  - Voice calls
+  - Email
+  - WhatsApp
+  - Telegram
+- **💫 Smart Notifications:**
+  - Desktop notifications
+  - Sound alerts
+  - Visual indicators
+  - Haptic feedback
+
+### 💾 Data & Settings
+- **🔒 Persistent Storage:**
+  - Contacts and groups
+  - Templates and preferences
+  - Check-in schedules
+  - Usage history
+- **⚙️ Advanced Settings:**
+  - AI provider configuration
+  - SMS provider settings
+  - Voice command preferences
+  - Location update frequency
+- **📱 PWA Features:**
+  - Offline support
+  - Home screen installation
+  - Push notifications
+  - Background sync
 
 ## 🛠️ Tech Stack
 
@@ -140,26 +211,29 @@ Contributions are welcome! If you have ideas for new features or improvements, p
 5. Push to the branch (`git push origin feature/your-feature-name`).
 6. Open a Pull Request.
 
-## 📲 How to Use on Different Platforms
+## 📲 Installation Guide
 
-Because this is a Progressive Web App, you can install it on almost any device for a native-app feel.
+Because this is a Progressive Web App (PWA), you can install it on almost any device for a native-app experience.
 
-#### 🤖 Android (Chrome)
-1.  Open the deployed app URL in Chrome.
-2.  Tap the three-dot menu icon in the top right.
-3.  Select **"Install app"** or **"Add to Home screen"**.
-4.  The Friend SOS icon will appear on your home screen.
+### Android (Chrome)
 
-#### 🍎 iOS (Safari)
-1.  Open the deployed app URL in Safari.
-2.  Tap the "Share" icon (a square with an arrow pointing up).
-3.  Scroll down and select **"Add to Home Screen"**.
-4.  Confirm the name and tap "Add".
+1. Open the deployed app URL in Chrome
+2. Tap the three-dot menu icon in the top right
+3. Select **"Install app"** or **"Add to Home screen"**
+4. The Friend SOS icon will appear on your home screen
 
-#### 💻 Desktop (Chrome, Edge)
-1.  Open the deployed app URL in a supported browser.
-2.  Look for an "Install" icon on the right side of the address bar.
-3.  Click it and confirm the installation. The app will be added to your desktop or applications folder.
+### iOS (Safari)
+
+1. Open the deployed app URL in Safari
+2. Tap the "Share" icon (square with an up arrow)
+3. Scroll down and select **"Add to Home Screen"**
+4. Confirm the name and tap "Add"
+
+### Desktop (Chrome, Edge)
+
+1. Open the deployed app URL in your browser
+2. Look for the "Install" icon in the address bar
+3. Click it to install as a desktop application
 
 ## 🤝 Contributing
 
