@@ -448,49 +448,59 @@ const App: React.FC = () => {
             ) : (
               <>
                 <div className="space-y-4">
-                  <InputField
-                    id="name"
-                    label="Your Name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g., Alex"
-                    required
-                  />
-                  <ContactInput
-                    value={contacts}
-                    onChange={setContacts}
-                  />
-                   <SoundSelector
-                    value={selectedSound}
-                    onChange={(e) => setSelectedSound(e.target.value)}
-                    onPreview={handlePreviewSound}
-                    volume={volume}
-                    onVolumeChange={(e) => setVolume(parseFloat(e.target.value))}
-                  />
-                   <LocationInfo 
+                  <div id="name-input">
+                    <InputField
+                      id="name"
+                      label="Your Name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="e.g., Alex"
+                      required
+                    />
+                  </div>
+                  <div id="contacts-input">
+                    <ContactInput
+                      value={contacts}
+                      onChange={setContacts}
+                    />
+                  </div>
+                  <div id="sound-selector">
+                    <SoundSelector
+                      value={selectedSound}
+                      onChange={(e) => setSelectedSound(e.target.value)}
+                      onPreview={handlePreviewSound}
+                      volume={volume}
+                      onVolumeChange={(e) => setVolume(parseFloat(e.target.value))}
+                    />
+                  </div>
+                  <div id="location-toggle">
+                    <LocationInfo 
                       isLoading={isFetchingLocation}
                       location={location}
                       error={locationError}
                       includeLocation={includeLocation}
                       onToggleInclude={() => setIncludeLocation(prev => !prev)}
-                  />
+                    />
+                  </div>
                   <MessageTemplateSelector templates={templates} onSelect={handleSelectTemplate} />
-                  <InputField
-                    id="message"
-                    label="What's the emergency? (Optional)"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Briefly describe, use a template, or use the mic..."
-                    isTextarea
-                    voiceSupport={speechRecognitionSupported}
-                    isListening={isListening}
-                    onVoiceClick={handleToggleListening}
-                  />
+                  <div id="message-input">
+                    <InputField
+                      id="message"
+                      label="What's the emergency? (Optional)"
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      placeholder="Briefly describe, use a template, or use the mic..."
+                      isTextarea
+                      voiceSupport={speechRecognitionSupported}
+                      isListening={isListening}
+                      onVoiceClick={handleToggleListening}
+                    />
+                  </div>
                 </div>
 
                 {error && <ErrorDisplay message={error} />}
 
-                <div className="pt-2">
+                <div className="pt-2" id="send-alert-button">
                   {isLoading ? (
                     <Loader />
                   ) : (
@@ -521,6 +531,7 @@ const App: React.FC = () => {
        <footer className="text-center mt-8 text-gray-500 text-sm">
         <p>Friend SOS &copy; {new Date().getFullYear()}. For demonstration purposes only.</p>
       </footer>
+      </TutorialManager>
     </div>
   );
 };
