@@ -1,6 +1,7 @@
 import React from 'react';
-import type { AlertContent } from '../types';
+import type { AlertContent, AlertStatus } from '../types';
 import { getContactType, formatPhoneNumberForURL } from '../utils/validation';
+import ProgressBar from './ProgressBar';
 
 interface GeneratedAlertProps {
   alert: AlertContent;
@@ -51,6 +52,29 @@ const GeneratedAlert: React.FC<GeneratedAlertProps> = ({ alert, onReset, contact
   const encodedTitle = encodeURIComponent(alert.title);
   const encodedBody = encodeURIComponent(alert.body);
 
+  const steps = [
+    { label: 'Validating', completed: true, current: alert.status === 'validating' },
+    { label: 'Generating', completed: alert.status !== 'validating', current: alert.status === 'generating' },
+    { label: 'Ready', completed: alert.status === 'ready', current: false },
+  ];
+
+  if (alert.status !== 'ready') {
+    return (
+      <div className="text-center p-4 animate-fade-in">
+        <h2 className="text-2xl font-bold text-red-300 mb-8">Generating Alert...</h2>
+        <ProgressBar 
+          steps={steps} 
+          className="mb-8"
+        />
+        <p className="text-gray-400 text-sm">
+          {alert.status === 'validating' ? 'Validating your input...' : 
+           alert.status === 'generating' ? 'Generating your alert...' :
+           'Processing...'}
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="text-center p-4 animate-fade-in">
       <div className="flex justify-center items-center mb-4">
@@ -80,7 +104,7 @@ const GeneratedAlert: React.FC<GeneratedAlertProps> = ({ alert, onReset, contact
                 const phoneUrl = formatPhoneNumberForURL(contact);
 
                 return (
-                    <li key={index} className="bg-gray-900/50 p-3 rounded-lg flex items-center justify-between animate-fade-in" style={{animationDelay: `${index * 100}ms`}}>
+                    <li key={index} className={`bg-gray-900/50 p-3 rounded-lg flex items-center justify-between animate-fade-in delay-${index}`}>
                         <span className="font-mono text-sm text-gray-200 truncate pr-2">{contact}</span>
                         <div className="flex items-center gap-3 flex-shrink-0">
                             {contactType === 'phone' && (

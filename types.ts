@@ -1,6 +1,9 @@
+export type AlertStatus = 'validating' | 'generating' | 'formatting' | 'ready';
+
 export interface AlertContent {
   title: string;
   body: string;
+  status?: AlertStatus;
 }
 
 export interface MessageTemplate {

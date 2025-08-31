@@ -285,25 +285,37 @@ const App: React.FC = () => {
 
   const handleSendAlert = useCallback(async () => {
     setError(null);
+    
+    // Initial validation
+    setIsLoading(true);
+    setGeneratedAlert({ title: '', body: '', status: 'validating' });
+    
     if (!name.trim()) {
       setError('Please enter your name.');
+      setGeneratedAlert(null);
+      setIsLoading(false);
       return;
     }
     if (contacts.length === 0) {
       setError('Please enter at least one contact.');
+      setGeneratedAlert(null);
+      setIsLoading(false);
       return;
     }
     if (contacts.some(c => !isValidContact(c))) {
       setError('Please correct any invalid contacts before sending.');
+      setGeneratedAlert(null);
+      setIsLoading(false);
       return;
     }
     if (includeLocation && !location) {
-        setError("Your location has not been determined yet. Please wait or disable location sharing.");
-        return;
+      setError("Your location has not been determined yet. Please wait or disable location sharing.");
+      setGeneratedAlert(null);
+      setIsLoading(false);
+      return;
     }
 
-    setIsLoading(true);
-    setGeneratedAlert(null);
+    setGeneratedAlert(prev => ({ ...prev!, status: 'generating' }));
     
     let messageWithLocation = message;
     if (includeLocation && location) {
@@ -315,7 +327,7 @@ const App: React.FC = () => {
         temperature,
         systemInstruction: customSystemInstruction,
       });
-      setGeneratedAlert(alertContent);
+      setGeneratedAlert({ ...alertContent, status: 'ready' });
       playSound(selectedSound, volume);
       showToast('Alert generated successfully!', 'success');
     } catch (e) {
