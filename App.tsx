@@ -129,26 +129,6 @@ const App: React.FC = () => {
 
   // Initialize app state
   useEffect(() => {
-    // PWA Service Worker Registration
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', async () => {
-        try {
-          const registration = await navigator.serviceWorker.register('/service-worker.ts');
-          console.log('ServiceWorker registration successful with scope: ', registration.scope);
-          
-          // Request permission for notifications
-          if ('Notification' in window) {
-            const permission = await Notification.requestPermission();
-            if (permission === 'granted') {
-              showToast('Notifications enabled for emergency alerts', 'success');
-            }
-          }
-        } catch (error) {
-          console.log('ServiceWorker registration failed: ', error);
-        }
-      });
-    }
-
     // Load all preferences from localStorage on initial render
     const savedContactsRaw = localStorage.getItem('sosContacts');
     if (savedContactsRaw) {
@@ -202,6 +182,8 @@ const App: React.FC = () => {
         console.error("Failed to parse templates from localStorage", e);
       }
     }
+
+    setIsInitializing(false);
 
     // Fetch location
     if (navigator.geolocation) {
