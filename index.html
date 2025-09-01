@@ -15,15 +15,8 @@
     <meta name="apple-mobile-web-app-title" content="Friend SOS" />
     <link rel="apple-touch-icon" href="/Friend-SOS/icons/icon-192.png" />
 
-    <link rel="stylesheet" href="/Friend-SOS/index.css">
-    <script>
-      // Fallback for Tailwind in case it fails to load from Vite
-      if (!window.tailwind) {
-        const tailwindCdn = document.createElement('script');
-        tailwindCdn.src = "https://cdn.tailwindcss.com";
-        document.head.appendChild(tailwindCdn);
-      }
-    </script>
+    <link rel="stylesheet" href="./index.css">
+    <!-- Remove Tailwind CDN fallback since we're using Vite with PostCSS -->
   </head>
   <body class="bg-gray-900">
     <div id="root"></div>
