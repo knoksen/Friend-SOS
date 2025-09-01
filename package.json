@@ -9,9 +9,10 @@
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "test": "vitest",
+    "test": "vitest run",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui",
     "test:e2e": "playwright test",
     "test:ci": "vitest run --coverage && playwright test"
   },

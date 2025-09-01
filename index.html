@@ -15,11 +15,13 @@
     <meta name="apple-mobile-web-app-title" content="Friend SOS" />
     <link rel="apple-touch-icon" href="/Friend-SOS/icons/icon-192.png" />
 
-    <link rel="stylesheet" href="./index.css">
-    <!-- Remove Tailwind CDN fallback since we're using Vite with PostCSS -->
+    <!-- CSS will be injected by Vite -->
   </head>
   <body class="bg-gray-900">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
+    <script type="module">
+      import './index.css'
+    </script>
   </body>
 </html>
