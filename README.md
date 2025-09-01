@@ -6,8 +6,11 @@
 [![GitHub repo size](https://img.shields.io/github/repo-size/knoksen/Friend-SOS?style=for-the-badge)](https://github.com/knoksen/Friend-SOS)
 [![GitHub last commit](https://img.shields.io/github/last-commit/knoksen/Friend-SOS?style=for-the-badge)](https://github.com/knoksen/Friend-SOS/commits)
 [![License](https://img.shields.io/github/license/knoksen/Friend-SOS?style=for-the-badge)](https://github.com/knoksen/Friend-SOS/blob/main/LICENSE)
-[![Deploy with Vercel](https://img.shields.io/badge/Vercel-Deploy-black?style=for-the-badge&logo=vercel)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fknoksen%2FFriend-SOS)
-[![Open in StackBlitz](https://img.shields.io/badge/StackBlitz-Start-blue?style=for-the-badge&logo=stackblitz)](https://stackblitz.com/fork/github/knoksen/Friend-SOS)
+[![Deploy with Vercel](https://img.shields.io/badge/Vercel-Deploy-black?style=for-the-badge&logo=vercel)](https://vercel.com/new/git/external?repository-url=https://github.com/knoksen/Friend-SOS&env=GEMINI_API_KEY,VITE_VAPID_PUBLIC_KEY&project-name=friend-sos&repository-name=friend-sos)
+[![Deploy to Netlify](https://img.shields.io/badge/Netlify-Deploy-blue?style=for-the-badge&logo=netlify)](https://app.netlify.com/start/deploy?repository=https://github.com/knoksen/Friend-SOS)
+[![Open in CodeSandbox](https://img.shields.io/badge/CodeSandbox-Open-blue?style=for-the-badge&logo=codesandbox)](https://codesandbox.io/p/github/knoksen/Friend-SOS)
+[![Open in StackBlitz](https://img.shields.io/badge/StackBlitz-Start-blue?style=for-the-badge&logo=stackblitz)](https://stackblitz.com/github/knoksen/Friend-SOS)
+[![Remix on Glitch](https://img.shields.io/badge/Glitch-Remix-pink?style=for-the-badge&logo=glitch)](https://glitch.com/edit/#!/import/github/knoksen/Friend-SOS)
 
 **Friend SOS** is a modern, installable Progressive Web App (PWA) designed to provide a fast and simple way to send a detailed emergency alert to a predefined list of contacts. It leverages the Google Gemini API to intelligently craft a clear, concise SOS message, and uses your device's native capabilities to dispatch it instantly.
 
@@ -15,7 +18,11 @@
 
 ## 🚀 Live Demo
 
-[Try the app now!](https://knoksen.github.io/Friend-SOS)
+> **Try it out:** [friend-sos.vercel.app](https://friend-sos.vercel.app)
+>
+> **Development Preview:** [friend-sos.netlify.app](https://friend-sos.netlify.app)
+>
+> **GitHub Pages:** [knoksen.github.io/Friend-SOS](https://knoksen.github.io/Friend-SOS)
 
 ---
 
@@ -101,6 +108,52 @@
   - Push notifications
   - Background sync
 
+## 🧪 Testing
+
+The project uses a comprehensive testing setup with:
+
+- **Vitest** - Fast Vite-native unit test framework
+- **React Testing Library** - Component testing with best practices
+- **Playwright** - End-to-end testing
+
+### Running Tests
+
+```bash
+# Run all unit tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run end-to-end tests
+npm run test:e2e
+
+# Run all tests (CI mode)
+npm run test:ci
+```
+
+### Test Coverage Goals
+
+- Lines: 80%
+- Functions: 80%
+- Branches: 80%
+- Statements: 80%
+
+### Test Structure
+
+1. **Unit Tests** (`src/__tests__/*.test.ts{x}`):
+   - Component tests
+   - Service tests
+   - Utility function tests
+
+2. **End-to-End Tests** (`e2e/*.spec.ts`):
+   - Full user flow testing
+   - PWA installation testing
+   - Offline functionality testing
+
 ## 🛠️ Tech Stack
 
 - **Frontend Framework:**
@@ -148,36 +201,124 @@ The app supports multiple AI providers. You can use any one or all of them:
 
 ### Step 2: Deploy the Application
 
-You have two options for deployment:
+You have several options for deployment. Choose the one that best suits your needs:
 
-#### Option 1: GitHub Pages (Recommended)
+#### Option 1: GitHub Pages (Recommended for Free Hosting)
 
-1. **Fork this Repository:** Click the "Fork" button at the top right of this page.
-2. **Configure Secrets:**
-   - Go to your forked repository's Settings > Secrets and variables > Actions
-   - Add your API keys as secrets:
-     - `GEMINI_API_KEY` (from Google AI Studio)
-     - `OPENAI_API_KEY` (from OpenAI Platform)
-     - `ANTHROPIC_API_KEY` (from Anthropic)
-   - At minimum, provide one of these keys
-3. **Enable GitHub Pages:**
+1. **Fork this Repository:**
+   - Click the "Fork" button at the top right of this page
+   - Clone your forked repository locally
+
+2. **Set up Environment:**
+   ```bash
+   # Create a .env file
+   cp .env.example .env
+   ```
+   Add your API keys to the .env file
+
+3. **Configure Repository Secrets:**
+   - Go to Settings > Secrets and variables > Actions
+   - Add these required secrets:
+     ```
+     GEMINI_API_KEY=your_gemini_api_key
+     VITE_VAPID_PUBLIC_KEY=your_vapid_public_key
+     ```
+
+4. **Enable GitHub Pages:**
    - Go to Settings > Pages
-   - Set the source to "GitHub Actions"
-4. **Deploy:**
-   - The app will automatically deploy when you push to main
-   - You can also manually deploy from the Actions tab
-   - Visit the "Environment" section to find your deployment URL
+   - Source: GitHub Actions
+   - Click "Save"
 
-#### Option 2: Vercel Deployment
+5. **Deploy:**
+   - The app will deploy automatically when you push to main
+   - Or manually trigger deployment from the Actions tab
+   - Your app will be live at `https://[username].github.io/Friend-SOS`
 
-1. **Fork this Repository:** Click the "Fork" button at the top right of this page.
-2. **Sign up on Vercel:** Go to [vercel.com](https://vercel.com/).
-3. **Create a New Project:** From your Vercel dashboard, click "Add New... > Project".
-4. **Import Repository:** Select your forked repository.
-5. **Configure Environment:**
-   - Add your API keys in the Environment Variables section
-   - Use the same names as in the `.env.example` file
-6. **Deploy:** Click "Deploy" to build and publish your app.
+#### Option 2: One-Click Deploy
+
+Choose your preferred hosting platform:
+
+##### Vercel (Recommended for Production)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/knoksen/Friend-SOS&env=GEMINI_API_KEY,VITE_VAPID_PUBLIC_KEY&project-name=friend-sos&repository-name=friend-sos)
+
+1. Click the "Deploy with Vercel" button
+2. Connect your GitHub account
+3. Configure environment variables:
+   - `GEMINI_API_KEY`
+   - `VITE_VAPID_PUBLIC_KEY`
+4. Click "Deploy"
+
+##### Netlify
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/knoksen/Friend-SOS)
+
+1. Click the "Deploy to Netlify" button
+2. Connect your GitHub account
+3. Configure environment variables in Site Settings
+4. Deploy will start automatically
+
+##### Railway
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template?template=https://github.com/knoksen/Friend-SOS&envs=GEMINI_API_KEY,VITE_VAPID_PUBLIC_KEY)
+
+1. Click the "Deploy on Railway" button
+2. Connect your GitHub account
+3. Configure environment variables
+4. Deploy will start automatically
+
+#### Option 3: Development Platforms
+
+For development and testing:
+
+##### CodeSandbox
+[![Open in CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/github/knoksen/Friend-SOS)
+
+Perfect for quick testing and development.
+
+##### StackBlitz
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/knoksen/Friend-SOS)
+
+Great for instant development environment setup.
+
+##### Glitch
+[![Remix on Glitch](https://cdn.glitch.com/2703baf2-b643-4da7-ab91-7ee2a2d00b5b%2Fremix-button.svg)](https://glitch.com/edit/#!/import/github/knoksen/Friend-SOS)
+
+Best for remixing and experimentation.
+
+#### Option 4: Manual Deployment
+
+For complete control over your deployment:
+
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/yourusername/Friend-SOS.git
+   cd Friend-SOS
+   ```
+
+2. **Install Dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Configure Environment:**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your API keys
+   ```
+
+4. **Build the Project:**
+   ```bash
+   npm run build
+   ```
+
+5. **Deploy the `dist` folder:**
+   - Upload to your web server
+   - Configure your server for SPA routing
+   - Set up HTTPS (required for PWA features)
+   - Configure environment variables
+
+6. **Test the Deployment:**
+   - Verify PWA installation works
+   - Test push notifications
+   - Check offline functionality
 
 ## 📲 Installation Guide
 
