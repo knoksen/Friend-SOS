@@ -1,25 +1,28 @@
 
 # Friend-SOS - Personal Emergency Alert PWA
 
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/knoksen/friend-sos?style=for-the-badge)
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/knoksen/friend-sos/main.yml?style=for-the-badge)
-![GitHub repo size](https://img.shields.io/github/repo-size/knoksen/friend-sos?style=for-the-badge)
-![GitHub last commit](https://img.shields.io/github/last-commit/knoksen/friend-sos?style=for-the-badge)
-![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)
-[![Deploy with Vercel](https://img.shields.io/badge/Vercel-Deploy-black?style=for-the-badge&logo=vercel)](https://vercel.com/import/git?s=https://github.com/knoksen/friend-sos)
-[![Open in StackBlitz](https://img.shields.io/badge/StackBlitz-Start-blue?style=for-the-badge&logo=stackblitz)](https://stackblitz.com/github/knoksen/friend-sos)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/knoksen/Friend-SOS?style=for-the-badge)](https://github.com/knoksen/Friend-SOS/releases)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/knoksen/Friend-SOS/ci-cd.yml?style=for-the-badge)](https://github.com/knoksen/Friend-SOS/actions)
+[![GitHub repo size](https://img.shields.io/github/repo-size/knoksen/Friend-SOS?style=for-the-badge)](https://github.com/knoksen/Friend-SOS)
+[![GitHub last commit](https://img.shields.io/github/last-commit/knoksen/Friend-SOS?style=for-the-badge)](https://github.com/knoksen/Friend-SOS/commits)
+[![License](https://img.shields.io/github/license/knoksen/Friend-SOS?style=for-the-badge)](https://github.com/knoksen/Friend-SOS/blob/main/LICENSE)
+[![Deploy with Vercel](https://img.shields.io/badge/Vercel-Deploy-black?style=for-the-badge&logo=vercel)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fknoksen%2FFriend-SOS)
+[![Open in StackBlitz](https://img.shields.io/badge/StackBlitz-Start-blue?style=for-the-badge&logo=stackblitz)](https://stackblitz.com/fork/github/knoksen/Friend-SOS)
 
 **Friend SOS** is a modern, installable Progressive Web App (PWA) designed to provide a fast and simple way to send a detailed emergency alert to a predefined list of contacts. It leverages the Google Gemini API to intelligently craft a clear, concise SOS message, and uses your device's native capabilities to dispatch it instantly.
 
 ---
 
-### [🚀 Live Demo (Link to your deployed app)](#)
+## 🚀 Live Demo
+
+[Try the app now!](https://knoksen.github.io/Friend-SOS)
 
 ---
 
 ## ✨ Key Features
 
 ### 🆘 Core Emergency Features
+
 - **🤖 Multi-Provider AI Alert Generation:** Choose between Gemini, OpenAI, and Anthropic to transform your message into a well-formatted, urgent alert.
 - **📲 Multi-Provider SMS Integration:** Support for multiple SMS providers (Twilio, MessageBird) with automatic fallback for enhanced reliability.
 - **🗣️ Voice Commands:** Trigger alerts, respond to check-ins, and control the app using natural voice commands (e.g., "Friend SOS emergency").
@@ -211,6 +214,6 @@ Contributions are welcome! If you have ideas for new features or improvements, p
 5. Push to the branch (`git push origin feature/your-feature-name`).
 6. Open a Pull Request.
 
-##  License
+## License
 
 This project is licensed under the **MIT License**. See the `LICENSE` file for details.

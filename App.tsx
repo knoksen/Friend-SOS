@@ -19,6 +19,7 @@ import Skeleton from './components/Skeleton';
 import TutorialManager from './components/TutorialManager';
 import HelpButton from './components/HelpButton';
 import KeyboardShortcutsModal from './components/KeyboardShortcutsModal';
+import { InstallPrompt } from './components/InstallPrompt';
 
 
 // Fix for SpeechRecognition API types which are not in default TS lib.
@@ -130,14 +131,21 @@ const App: React.FC = () => {
   useEffect(() => {
     // PWA Service Worker Registration
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.ts')
-          .then(registration => {
-            console.log('ServiceWorker registration successful with scope: ', registration.scope);
-          })
-          .catch(error => {
-            console.log('ServiceWorker registration failed: ', error);
-          });
+      window.addEventListener('load', async () => {
+        try {
+          const registration = await navigator.serviceWorker.register('/service-worker.ts');
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          
+          // Request permission for notifications
+          if ('Notification' in window) {
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+              showToast('Notifications enabled for emergency alerts', 'success');
+            }
+          }
+        } catch (error) {
+          console.log('ServiceWorker registration failed: ', error);
+        }
       });
     }
 
@@ -481,6 +489,9 @@ const App: React.FC = () => {
           onClose={() => removeToast(toast.id)}
         />
       ))}
+
+      {/* Install Prompt */}
+      <InstallPrompt />
 
       <TutorialManager>
         <div 

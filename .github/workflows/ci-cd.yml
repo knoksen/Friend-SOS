@@ -114,6 +114,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'release'
     name: Deploy to Production
+    environment: production
     
     steps:
       - name: Download Client Build
@@ -127,16 +128,55 @@ jobs:
         with:
           name: server-build
           path: server/dist
+          
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
       
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
+          cname: ${{ secrets.CUSTOM_DOMAIN }}
       
       - name: Deploy Server to Azure
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'friend-sos-server'
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: server/dist
+          
+      - name: Verify Client Deployment
+        run: |
+          echo "Verifying client deployment..."
+          response=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.CLIENT_URL }})
+          if [ $response -ne 200 ]; then
+            echo "Client deployment verification failed with status code: $response"
+            exit 1
+          fi
+          echo "Client deployment verified successfully!"
+          
+      - name: Verify Server Deployment
+        run: |
+          echo "Verifying server deployment..."
+          response=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.SERVER_URL }}/health)
+          if [ $response -ne 200 ]; then
+            echo "Server deployment verification failed with status code: $response"
+            exit 1
+          fi
+          echo "Server deployment verified successfully!"
+          
+      - name: Configure DNS and SSL (if needed)
+        run: |
+          if [ ! -z "${{ secrets.AZURE_DNS_NAME }}" ]; then
+            echo "Configuring custom domain and SSL..."
+            az webapp config hostname add --webapp-name ${{ secrets.AZURE_WEBAPP_NAME }} \
+              --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+              --hostname ${{ secrets.AZURE_DNS_NAME }}
+            
+            az webapp config ssl bind --certificate-thumbprint ${{ secrets.SSL_CERT_THUMBPRINT }} \
+              --ssl-type SNI --name ${{ secrets.AZURE_WEBAPP_NAME }} \
+              --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }}
+          fi
