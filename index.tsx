@@ -6,7 +6,7 @@ ai.setup(process.env.APPLICATIONINSIGHTSKEY || 'your_instrumentation_key').start
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import './pwa/register-sw';
+import './src/pwa/register-sw';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
