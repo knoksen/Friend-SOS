@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import ContactInput from '../components/ContactInput';
+import ContactInput from "../../components/ContactInput";
 import { isValidContact } from '../utils/validation';
 
 vi.mock('../utils/validation', () => ({

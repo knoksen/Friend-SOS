@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { generateAlert } from '../services/geminiService';
+import { generateAlert } from '../../services/geminiService';
 
 // Mock the Gemini API response
 vi.mock('@google/generative-ai', () => ({
