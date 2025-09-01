@@ -14,6 +14,16 @@
 
 **Friend SOS** is a modern, installable Progressive Web App (PWA) designed to provide a fast and simple way to send a detailed emergency alert to a predefined list of contacts. It leverages the Google Gemini API to intelligently craft a clear, concise SOS message, and uses your device's native capabilities to dispatch it instantly.
 
+## 📸 Screenshots
+
+|                   Main Screen                   |                   Settings Screen                   |
+|:---------------------------------------------:|:--------------------------------------------------:|
+| ![Main Screen](screenshots/main-screen-dark.png) | ![Settings Screen](screenshots/settings-screen-dark.png) |
+
+|                 Generated Alert                 |                     Voice Input                     |
+|:---------------------------------------------:|:--------------------------------------------------:|
+| ![Alert Screen](screenshots/alert-generated-dark.png) | ![Voice Input](screenshots/voice-input-dark.png) |
+
 ---
 
 ## 🚀 Live Demo
