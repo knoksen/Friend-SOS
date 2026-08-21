@@ -20,7 +20,7 @@ VITE_VAPID_PUBLIC_KEY=${vapidKeys.publicKey}
 
   console.log('VAPID Keys generated successfully!');
   console.log('Public Key:', vapidKeys.publicKey);
-  console.log('Private Key:', vapidKeys.privateKey);
+  console.log('Private Key: [REDACTED - written to .env file]');
   console.log('\nKeys have been saved to .env files');
 }
 
